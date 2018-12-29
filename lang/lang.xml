@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<lang>
+	<item name="typofix_info_msg">
+		<value xml:lang="ko"><![CDATA['%s'의 검색결과입니다.]]></value>
+    </item>
+	<item name="typofix_info_more_msg">
+		<value xml:lang="ko"><![CDATA[%s 검색결과 보기]]></value>
+    </item>
+    <item name="typofix_info_suggest_msg">
+		<value xml:lang="ko"><![CDATA['%s'로 검색하시겠습니까?]]></value>
+    </item>
+</lang>
