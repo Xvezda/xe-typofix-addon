@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<addon version="0.2">
+    <title xml:lang="ko">검색어 오타수정 애드온</title>
+    <description xml:lang="ko">
+        네이버 오픈 API를 이용하여 검색어의 오타를 수정/추천하는 애드온입니다.</description>
+    <version>1.0</version>
+    <date>2018-12-29</date>
+
+    <author email_address="xvezda@naver.com" link="https://xvezda.com">
+        <name xml:lang="ko">즈베즈다</name>
+        <name xml:lang="en">Xvezda</name>
+    </author>
+    <extra_vars>
+        <var name="client_id" type="text">
+            <title xml:lang="ko">Client ID</title>
+            <description xml:lang="ko">네이버 개발자 센터에서 발급받은 Client ID 값을 입력해주세요.</description>
+        </var>
+        <var name="client_secret" type="text">
+            <title xml:lang="ko">Client Secret</title>
+            <description xml:lang="ko">네이버 개발자 센터에서 발급받은 Client Secret 값을 입력해주세요.</description>
+        </var>
+    </extra_vars>
+</addon>
+
