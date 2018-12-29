@@ -67,10 +67,10 @@ if ($called_position == 'before_display_content') {
         return;
     }
     $temp_output = $output;
-    $keyword = Context::get($parameter);
+    $keyword = htmlspecialchars(Context::get($parameter), ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
 
     if (Context::get('typo_keyword') && $keyword) {
-        $typo_keyword = Context::get('typo_keyword');
+        $typo_keyword = htmlspecialchars(Context::get('typo_keyword'), ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
         Context::loadLang(_XE_PATH_ . 'addons/typofix/lang');
 
         $prefix = '<!--#Meta:modules/';

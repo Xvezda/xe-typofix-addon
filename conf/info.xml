@@ -12,12 +12,32 @@
     </author>
     <extra_vars>
         <var name="client_id" type="text">
-            <title xml:lang="ko">Client ID</title>
+            <title xml:lang="ko">(* 필수) Client ID</title>
             <description xml:lang="ko">네이버 개발자 센터에서 발급받은 Client ID 값을 입력해주세요.</description>
         </var>
         <var name="client_secret" type="text">
-            <title xml:lang="ko">Client Secret</title>
+            <title xml:lang="ko">(* 필수) Client Secret</title>
             <description xml:lang="ko">네이버 개발자 센터에서 발급받은 Client Secret 값을 입력해주세요.</description>
+        </var>
+        <var name="board_enable" type="select">
+            <title xml:lang="ko">게시판 검색에서 사용</title>
+            <description xml:lang="ko">통합검색이 아닌 게시판 검색에서도 애드온을 사용합니다.</description>
+            <options value="">
+                <title xml:lang="ko">사용 안함</title>
+            </options>
+            <options value="Y">
+                <title xml:lang="ko">활성화</title>
+            </options>
+        </var>
+        <var name="force_correction" type="select">
+            <title xml:lang="ko">오타 강제 교정</title>
+            <description xml:lang="ko">활성화 시 검색어 추천방식이 아닌, 리다이렉트를 이용한 강제 교정 방식이 적용됩니다.</description>
+            <options value="">
+                <title xml:lang="ko">사용 안함</title>
+            </options>
+            <options value="Y">
+                <title xml:lang="ko">활성화</title>
+            </options>
         </var>
     </extra_vars>
 </addon>
