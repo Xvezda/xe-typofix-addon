@@ -39,6 +39,12 @@
                 <title xml:lang="ko">활성화</title>
             </options>
         </var>
+        <!-- Dummy text field for button -->
+        <var name="delete_cache" type="text">
+            <title xml:lang="ko">캐시 삭제</title>
+            <description xml:lang="ko">object cache 기능을 사용하고 있을때 생성되는 키워드 캐시를 비웁니다.
+            (* 주의: 기술적인 문제로 전체 object cache를 대상으로 truncate를 실행합니다.)</description>
+        </var>
     </extra_vars>
 </addon>
 
