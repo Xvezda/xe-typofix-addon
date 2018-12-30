@@ -16,16 +16,19 @@ if ($called_position == 'after_module_proc') {
                 // FIXME: Find a way to clear cache just for addon
                 $oCacheHandler->truncate();
             }
+            Context::close();
             exit(0);
         } else {
             $customize_html = <<<EOD
 <script>
 xe.lang.cmd_delete = '%s';
+xe.lang.confirm_delete = '%s';
 xe.lang.success_deleted = '%s';
 xe.lang.fail_to_delete = '%s';
 jQuery("#delete_cache").attr("type", "button").attr("value", xe.lang.cmd_delete)
 .addClass("x_btn").addClass("x_btn-danger")
 .on("click", function(e) {
+    if (!confirm(xe.lang.confirm_delete)) return;
     jQuery.ajax({
         url: current_url,
         type: 'post',
@@ -43,6 +46,7 @@ jQuery("#delete_cache").attr("type", "button").attr("value", xe.lang.cmd_delete)
 EOD;
             Context::addHtmlFooter(
                 sprintf($customize_html, Context::getLang('cmd_delete'),
+                                         Context::getLang('confirm_delete'),
                                          Context::getLang('success_deleted'),
                                          Context::getLang('fail_to_delete')
                 )
@@ -128,34 +132,51 @@ if ($called_position == 'before_display_content') {
     } else {
         return;
     }
+    Context::loadFile('./addons/typofix/css/style.css');
+
     $temp_output = $output;
     $keyword = htmlspecialchars(Context::get($parameter), ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
 
-    if ((Context::get('suggest_keyword') || Context::get('typo_keyword')) && $keyword) {
-        $typo_keyword = htmlspecialchars(Context::get('typo_keyword'), ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
+    if ( (!$addon_info->force_correction && Context::get('suggest_keyword')
+          || $addon_info->force_correction && Context::get('typo_keyword'))
+                && $keyword) {
         Context::loadLang(_XE_PATH_ . 'addons/typofix/lang');
 
         $prefix = '<!--#Meta:modules/';
         // Find first position where module meta tags appear
         $pos = strpos($temp_output, $prefix.$this->module);
-        if ($pos !== false) {
-            // Inject information box into top of content
-            $info_box = '';
-            if ($addon_info->force_correction) {
-                $info_box = '<div id="typofix_info" style="line-height: 25px; padding: 15px 0; font-size: 14px">'
-                    . sprintf(Context::getLang('typofix_info_msg'), $keyword)
-                    . ' &nbsp;<a href="' . getAutoEncodedUrl($parameter, $typo_keyword, 'typo_keyword', '', 'typo_fix', 'off')
-                    . '">' . sprintf(Context::getLang('typofix_info_more_msg'), $typo_keyword) . '</a></div>';
-            } else {
-                $info_box = '<div id="typofix_info" style="line-height: 25px; padding: 15px 0; font-size: 14px">'
-                    . sprintf(Context::getLang('typofix_info_msg'), $keyword)
-                    . ' &nbsp;<a href="' . getAutoEncodedUrl($parameter, Context::get('suggest_keyword'))
-                    . '">' . sprintf(Context::getLang('typofix_info_suggest_msg'), Context::get('suggest_keyword')) . '</a></div>';
-            }
-            if (!$info_box) return;
-            $result = substr_replace($temp_output, $info_box, $pos, 0);
-            $output = $result;
+        if ($pos === false) return;
+
+        // Inject information box into top of content
+        $info_box = '';
+        $info_box_prefix = '<div id="typofix_info">';
+        $info_box_suffix = '</div>';
+
+        if ($addon_info->force_correction) {
+            $typo_keyword = htmlspecialchars(Context::get('typo_keyword'), ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
+            $info_box = $info_box_prefix
+                . sprintf(Context::getLang('typofix_info_msg'), $keyword)
+                . ' &nbsp;<a href="'
+                . getAutoEncodedUrl($parameter, urlencode($typo_keyword), 'typo_keyword', '', 'typo_fix', 'off')
+                . '">'
+                . sprintf(Context::getLang('typofix_info_more_msg'),
+                          $typo_keyword)
+                . '</a>'
+                .$info_box_suffix;
+        } else {
+            $suggest_keyword = htmlspecialchars(Context::get('suggest_keyword'), ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
+            $info_box = $info_box_prefix
+                . sprintf(Context::getLang('typofix_info_msg'), $keyword)
+                . ' &nbsp;<a href="'
+                . getAutoEncodedUrl($parameter, urlencode($suggest_keyword))
+                . '">'
+                . sprintf(Context::getLang('typofix_info_suggest_msg'),
+                          $suggest_keyword)
+                . '</a>'
+                . $info_box_suffix;
         }
+        $result = substr_replace($temp_output, $info_box, $pos, 0);
+        $output = $result;
     }
 }
 
