@@ -6,6 +6,6 @@ XE typo fix addon
 
 License
 -------
-GPLv2
+GPL v2
 
 <a href="https://developers.naver.com/" target="_blank"><img width="300" src="2-1. NAVER OpenAPI_c_hor.png"></a>
