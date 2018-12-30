@@ -56,7 +56,7 @@ EOD;
                 )
             );
         }
-	}
+    }
 }
 
 if ($called_position == 'after_module_proc') {
