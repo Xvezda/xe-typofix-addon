@@ -131,16 +131,20 @@ if ($called_position == 'after_module_proc') {
 if ($called_position == 'before_display_content') {
     if (Context::get('act') == 'IS') {
         $parameter = 'is_keyword';
-    } else if (Context::get('search_target') && !Context::get('document_srl')) {
+    } else if (Context::get('search_target')) {
         $parameter = 'search_keyword';
     } else {
         return;
     }
+
     if (Mobile::isFromMobilePhone()) {
         Context::loadFile('./addons/typofix/css/mobile.style.css');
     } else {
         Context::loadFile('./addons/typofix/css/style.css');
     }
+
+    if ($parameter == 'search_keyword' && !$addon_info->board_enable) return;
+    if (Context::get('document_srl')) return;
 
     $temp_output = $output;
     $keyword = htmlspecialchars(Context::get($parameter), ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
@@ -160,26 +164,31 @@ if ($called_position == 'before_display_content') {
         $info_box_prefix = '<div id="typofix_info">';
         $info_box_suffix = '</div>';
 
+        $word_limit = ($addon_info->word_limit ? intval($addon_info->word_limit) : 16);
         if ($addon_info->force_correction) {
             $typo_keyword = htmlspecialchars(Context::get('typo_keyword'), ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
             $info_box = $info_box_prefix
-                . sprintf(Context::getLang('typofix_info_msg'), $keyword)
+                . sprintf(Context::getLang('typofix_info_msg'),
+                          cut_str($keyword, $word_limit))
                 . ' &nbsp;<a href="'
-                . getAutoEncodedUrl($parameter, urlencode($typo_keyword), 'typo_keyword', '', 'typo_fix', 'off')
+                . getAutoEncodedUrl($parameter, urlencode($typo_keyword),
+                                    'typo_keyword', '',
+                                    'typo_fix', 'off')
                 . '">'
                 . sprintf(Context::getLang('typofix_info_more_msg'),
-                          $typo_keyword)
+                          cut_str($typo_keyword, $word_limit))
                 . '</a>'
                 .$info_box_suffix;
         } else {
             $suggest_keyword = htmlspecialchars(Context::get('suggest_keyword'), ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
             $info_box = $info_box_prefix
-                . sprintf(Context::getLang('typofix_info_msg'), $keyword)
+                . sprintf(Context::getLang('typofix_info_msg'),
+                          cut_str($keyword, $word_limit))
                 . ' &nbsp;<a href="'
                 . getAutoEncodedUrl($parameter, urlencode($suggest_keyword))
                 . '">'
                 . sprintf(Context::getLang('typofix_info_suggest_msg'),
-                          $suggest_keyword)
+                          cut_str($suggest_keyword, $word_limit))
                 . '</a>'
                 . $info_box_suffix;
         }

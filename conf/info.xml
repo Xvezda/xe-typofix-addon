@@ -39,6 +39,11 @@
                 <title xml:lang="ko">활성화</title>
             </options>
         </var>
+        <var name="word_limit" type="text">
+            <title xml:lang="ko">키워드 길이 제한</title>
+            <description xml:lang="ko">입력/추천 키워드의 최대 길이를 제한합니다.
+               빈칸으로 두면 기본값이 적용됩니다. (기본값: 16)</description>
+        </var>
         <!-- Dummy text field for button -->
         <var name="delete_cache" type="text">
             <title xml:lang="ko">캐시 삭제</title>
