@@ -129,6 +129,8 @@ if ($called_position == 'after_module_proc') {
 
 
 if ($called_position == 'before_display_content') {
+    if (!$addon_info->client_id || !$addon_info->client_secret) return;
+
     if (Context::get('act') == 'IS') {
         $parameter = 'is_keyword';
     } else if (Context::get('search_target')) {
