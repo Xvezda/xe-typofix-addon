@@ -127,12 +127,16 @@ if ($called_position == 'after_module_proc') {
 if ($called_position == 'before_display_content') {
     if (Context::get('act') == 'IS') {
         $parameter = 'is_keyword';
-    } else if (Context::get('search_target')) {
+    } else if (Context::get('search_target') && !Context::get('document_srl')) {
         $parameter = 'search_keyword';
     } else {
         return;
     }
-    Context::loadFile('./addons/typofix/css/style.css');
+    if (Mobile::isFromMobilePhone()) {
+        Context::loadFile('./addons/typofix/css/mobile.style.css');
+    } else {
+        Context::loadFile('./addons/typofix/css/style.css');
+    }
 
     $temp_output = $output;
     $keyword = htmlspecialchars(Context::get($parameter), ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
