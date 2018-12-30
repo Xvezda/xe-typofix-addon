@@ -42,6 +42,10 @@ jQuery("#delete_cache").attr("type", "button").attr("value", xe.lang.cmd_delete)
     });
     e.preventDefault();
 });
+jQuery('label').each(function(k, v) {
+    var html = v.innerHTML;
+    v.innerHTML = html.replace(/(\(\*\s.+\))/, '<span style="color: red">$1</span>');
+});
 </script>
 EOD;
             Context::addHtmlFooter(
