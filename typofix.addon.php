@@ -6,6 +6,7 @@ if (!defined('__XE__')) exit();
 
 if ($called_position == 'after_module_proc') {
     if (Context::get('typo_fix') == 'off') return;
+    if (!$addon_info->board_enable && $this->module == 'board') return;
 
     if ($this->act == 'IS' && Context::get('is_keyword')
         || $this->act == 'dispBoardContent' && Context::get('search_keyword')) {
@@ -50,8 +51,12 @@ if ($called_position == 'after_module_proc') {
 
         if (!$result) return;
 
-        // Redirect to suggestion
-        $this->setRedirectUrl(getNotEncodedUrl($parameter, $result, 'typo_keyword', $keyword));
+        if ($addon_info->force_correction) {
+            // Redirect to suggestion
+            $this->setRedirectUrl(getNotEncodedUrl($parameter, $result, 'typo_keyword', $keyword));
+        } else {
+            Context::set('suggest_keyword', $result);
+        }
     } else if (Context::get('typo_keyword')) {
         $this->setRedirectUrl(getNotEncodedUrl('typo_keyword', ''));
     }
@@ -69,7 +74,7 @@ if ($called_position == 'before_display_content') {
     $temp_output = $output;
     $keyword = htmlspecialchars(Context::get($parameter), ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
 
-    if (Context::get('typo_keyword') && $keyword) {
+    if ((Context::get('suggest_keyword') || Context::get('typo_keyword')) && $keyword) {
         $typo_keyword = htmlspecialchars(Context::get('typo_keyword'), ENT_COMPAT | ENT_HTML401, 'UTF-8', false);
         Context::loadLang(_XE_PATH_ . 'addons/typofix/lang');
 
@@ -78,7 +83,19 @@ if ($called_position == 'before_display_content') {
         $pos = strpos($temp_output, $prefix.$this->module);
         if ($pos !== false) {
             // Inject information box into top of content
-            $info_box = '<div id="typofix_info" style="line-height: 25px; padding: 15px 0; font-size: 14px">' . sprintf(Context::getLang('typofix_info_msg'), $keyword) . ' &nbsp;<a href="' . getAutoEncodedUrl($parameter, $typo_keyword, 'typo_keyword', '', 'typo_fix', 'off') . '">' . sprintf(Context::getLang('typofix_info_more_msg'), $typo_keyword) . '</a></div>';
+            $info_box = '';
+            if ($addon_info->force_correction) {
+                $info_box = '<div id="typofix_info" style="line-height: 25px; padding: 15px 0; font-size: 14px">'
+                    . sprintf(Context::getLang('typofix_info_msg'), $keyword)
+                    . ' &nbsp;<a href="' . getAutoEncodedUrl($parameter, $typo_keyword, 'typo_keyword', '', 'typo_fix', 'off')
+                    . '">' . sprintf(Context::getLang('typofix_info_more_msg'), $typo_keyword) . '</a></div>';
+            } else {
+                $info_box = '<div id="typofix_info" style="line-height: 25px; padding: 15px 0; font-size: 14px">'
+                    . sprintf(Context::getLang('typofix_info_msg'), $keyword)
+                    . ' &nbsp;<a href="' . getAutoEncodedUrl($parameter, Context::get('suggest_keyword'))
+                    . '">' . sprintf(Context::getLang('typofix_info_suggest_msg'), Context::get('suggest_keyword')) . '</a></div>';
+            }
+            if (!$info_box) return;
             $result = substr_replace($temp_output, $info_box, $pos, 0);
             $output = $result;
         }
